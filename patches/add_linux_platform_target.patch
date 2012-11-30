@@ -1,21 +1,9 @@
-diff -rupN chicken-4.8.0/chicken.h chicken-4.8.0-diff/chicken.h
---- chicken-4.8.0/chicken.h	2012-09-24 07:07:29.000000000 +0000
-+++ chicken-4.8.0-diff/chicken.h	2012-11-19 15:28:36.674330948 +0000
-@@ -836,7 +836,9 @@ DECL_C_PROC_p0 (128,  1,0,0,0,0,0,0,0)
- # define C_fopen                    fopen
- # define C_fclose                   fclose
- # define C_strpbrk                  strpbrk
-+# if defined (__ANDROID__)
- # define C_gcvt                     gcvt
-+# endif
- # define C_sprintf                  sprintf
- # define C_snprintf                 snprintf
- # define C_printf                   printf
+diff -rupN chicken-4.8.0/eval.scm chicken-4.8.0-diff/eval.scm
 diff -rupN chicken-4.8.0/Makefile.android chicken-4.8.0-diff/Makefile.android
 --- chicken-4.8.0/Makefile.android	1970-01-01 00:00:00.000000000 +0000
-+++ chicken-4.8.0-diff/Makefile.android	2012-11-26 12:25:31.653290323 +0000
-@@ -0,0 +1,109 @@
-+# Makefile.linux - configuration for Linux -*- Makefile -*-
++++ chicken-4.8.0-diff/Makefile.android	2012-11-30 22:37:55.023087242 +0000
+@@ -0,0 +1,107 @@
++# Makefile.android - configuration for Android -*- Makefile -*-
 +#
 +# Copyright (c) 2008-2012, The Chicken Team
 +# Copyright (c) 2007, Felix L. Winkelmann
@@ -107,8 +95,6 @@ diff -rupN chicken-4.8.0/Makefile.android chicken-4.8.0-diff/Makefile.android
 +	echo "#define HAVE_ALLOCA_H 1" >>$@
 +	echo "#define HAVE_GRP_H 1" >>$@
 +	echo "#define HAVE_ERRNO_H 1" >>$@
-+#	echo "#define HAVE_GCVT 1" >>$@
-+#	echo "#define HAVE_SYSEXITS_H 1" >>$@
 +	echo "#define HAVE_MEMMOVE 1" >>$@
 +	echo "#define C_STACK_GROWS_DOWNWARD 1" >>$@
 +	echo "#define ANDROID 1" >>$@
@@ -126,25 +112,7 @@ diff -rupN chicken-4.8.0/Makefile.android chicken-4.8.0-diff/Makefile.android
 +include $(SRCDIR)/rules.make
 diff -rupN chicken-4.8.0/posixunix.scm chicken-4.8.0-diff/posixunix.scm
 --- chicken-4.8.0/posixunix.scm	2012-09-24 08:49:11.000000000 +0000
-+++ chicken-4.8.0-diff/posixunix.scm	2012-11-19 14:56:52.165020234 +0000
-@@ -62,7 +62,7 @@ static C_TLS int C_wait_status;
- # include <sys/tty.h>
- #endif
- 
--#ifdef HAVE_GRP_H
-+#if defined(HAVE_GRP_H)
- #include <grp.h>
- #endif
- 
-@@ -124,7 +124,7 @@ static C_TLS struct utsname C_utsname;
- static C_TLS struct flock C_flock;
- static C_TLS DIR *temphandle;
- static C_TLS struct passwd *C_user;
--#ifdef HAVE_GRP_H
-+#if defined(HAVE_GRP_H)
- static C_TLS struct group *C_group;
- #else
- static C_TLS struct {
++++ chicken-4.8.0-diff/posixunix.scm	2012-11-30 22:35:36.099090225 +0000
 @@ -178,7 +178,7 @@ static C_TLS struct stat C_statbuf;
  #define C_do_readlink(f, b)    C_fix(readlink(C_data_pointer(f), C_data_pointer(b), FILENAME_MAX))
  #define C_getpwnam(n)       C_mk_bool((C_user = getpwnam((char *)C_data_pointer(n))) != NULL)
