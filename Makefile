@@ -15,7 +15,7 @@ target/: toolchain/$(PLATFORM)/ build/target/chicken-4.8.0/
 			TARGET_FEATURES="-no-feature x86 -feature arm" \
 			ARCH= \
 			PREFIX=/data/data/com.bevuta.androidChickenTest \
-			C_INSTALL_EGG_HOME=/data/data/com.bevuta.androidChickenTest\lib \
+			C_INSTALL_EGG_HOME=/data/data/com.bevuta.androidChickenTest/lib \
 			DESTDIR=$(PWD)/target \
 		install
 
