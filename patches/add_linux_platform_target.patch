@@ -1,4 +1,14 @@
 diff -rupN chicken-4.8.0/eval.scm chicken-4.8.0-diff/eval.scm
+--- chicken-4.8.0/eval.scm	2012-09-24 08:49:11.000000000 +0000
++++ chicken-4.8.0-diff/eval.scm	2012-11-30 22:32:18.507094459 +0000
+@@ -1189,6 +1189,7 @@
+ 	      ((or (memq id ##sys#core-library-modules)
+ 		   (memq id ##sys#core-syntax-modules))
+ 	       (or (##sys#load-library-0 id #f)
++		   (##sys#load-library-0 (string->symbol (string-append "lib" (symbol->string id))) #f)
+ 		   (and err?
+ 			(##sys#error loc "cannot load core library" id))))
+ 	      (else
 diff -rupN chicken-4.8.0/Makefile.android chicken-4.8.0-diff/Makefile.android
 --- chicken-4.8.0/Makefile.android	1970-01-01 00:00:00.000000000 +0000
 +++ chicken-4.8.0-diff/Makefile.android	2012-11-30 22:37:55.023087242 +0000
