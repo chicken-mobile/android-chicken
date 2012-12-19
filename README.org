@@ -1,0 +1,35 @@
+* Chicken Scheme for Android
+  this files will setup a cross compiler toolchain for the use of Chicken Scheme on Android.
+  with the help of the Chicken cross compiler we can build native binarys with csc for android.
+  
+** Prerequisites
+   - to use the makefile you need to have the Android SDK and NDK for your system setup.
+   - if you got the NDK installed you need to edit the first line in the makefile to note
+     the path to your installation. on my system this ist "/opt/google/android/ndk".
+   - the makefile will copy a standalone toolchain for the platform noted on the second line.
+     you can see which platforms are currently available on your system in $NDK_PATH/platforms
+     or manage them with the "android" tool from the tools directory in the Android SDK.
+
+** Build
+   - if you setup everything correctly you can run make to build Chicken Scheme for your
+     platform target and a cross compiler chicken that you can use to build binarys with
+     the android cross compiler from our standalone toolchain.
+
+** How to use
+   - this will only build Chicken for you Android target platform. you can already compile
+     scheme code with the csc binary provided in the host/bin directory. 
+     i just add this into my PATH on the terminal while im developing for Android.
+   - however to use it you need to copy your binary somehow to the device and run it on a shell.
+     ie. using the "adb push" and "adb shell" command from the platform-tools directory of the
+     Android SDK and setup the LD_LIBRARY_PATH to catch up your librarys accordingly.
+   - there is an example project which shows how to package it in an Android application here:
+     https://github.com/chicken-mobile/example
+     
+* Warning
+  there is much room for improvement and i didnt real testing on it but didnt got real problems too.
+  this build will include some hardcoded paths which has to be changed if you change the package name 
+  when building it to be packaged in your Android project for example. i will try to clean up this in 
+  the near future and provide a way to have multiple toolchains for the different platforms regardless 
+  of the package name used too. if you see any issues please report them i will try to fix it as soon
+  as possible. if you want to contribute im happy to receive your improvements :)
+  
