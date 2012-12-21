@@ -16,7 +16,7 @@
      the android cross compiler from our standalone toolchain.
 
 ** How to use
-   - this will only build Chicken for you Android target platform. you can already compile
+   - this will only build Chicken for your Android target platform. you can already compile
      scheme code with the csc binary provided in the host/bin directory. 
      i just add this into my PATH on the terminal while im developing for Android.
    - however to use it you need to copy your binary somehow to the device and run it on a shell.
@@ -25,6 +25,12 @@
    - there is an example project which shows how to package it in an Android application here:
      https://github.com/chicken-mobile/example
      
+** How to install Chicken Eggs
+   - To install eggs into your cross compiler toolchain repository you should get the "host/bin"
+     directory of this repo in your path. Afterwards you can use chicken-install as usual.
+     In the future those things will get installed to some known system location making this more
+     hopefully more intuitive for Chicken users.
+
 * Warning
   there is much room for improvement and i didnt real testing on it but didnt got real problems too.
   this build will include some hardcoded paths which has to be changed if you change the package name 
