@@ -1,6 +1,6 @@
 * Chicken Scheme for Android
   This files will setup a cross compiler toolchain for the use of Chicken Scheme on Android.
-  With the help of the Chicken cross compiler we can build native binaries with `csc` for Android.
+  With the help of the Chicken cross compiler we can build native binaries with csc for Android.
   
 ** Prerequisites
    - to use the makefile you need to have the Android SDK and NDK for your system setup.
@@ -32,10 +32,10 @@
      hopefully more intuitive for Chicken users.
 
 * Warning
-  there is much room for improvement and i didnt real testing on it but didnt got real problems too.
-  this build will include some hardcoded paths which has to be changed if you change the package name 
-  when building it to be packaged in your Android project for example. i will try to clean up this in 
+  There is much room for improvement and I didnt real testing on it but didnt got real problems too.
+  This build will include some hardcoded paths which has to be changed if you change the package name 
+  when building it to be packaged in your Android project for example. I will try to clean up this in 
   the near future and provide a way to have multiple toolchains for the different platforms regardless 
-  of the package name used too. if you see any issues please report them i will try to fix it as soon
-  as possible. if you want to contribute im happy to receive your improvements :)
+  of the package name used too. If you see any issues please report them I will try to fix it as soon
+  as possible. If you want to contribute I'm happy to receive your improvements :)
   
