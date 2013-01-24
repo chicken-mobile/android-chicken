@@ -30,3 +30,5 @@ This build includes some hardcoded paths which must be changed if you change an 
 If you have any issues, please report them. I will try to fix them as soon as possible.
 
 If you want to contribute I'm happy to receive your improvements :)
+
+You will find us on irc at irc.f0o.de in #mobile-chicken
