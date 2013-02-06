@@ -6,6 +6,7 @@ These files will setup a cross compiler toolchain for the use of Chicken Scheme 
 
 * Android [SDK](http://developer.android.com/sdk/) and [NDK](http://developer.android.com/tools/sdk/ndk/)
 * Edit the first line in the makefile to point to the path to your NDK installation. On my system this is `/opt/google/android/ndk`.
+* A [Chicken](http://code.call-cc.org) installation
 
 ## Build
 
