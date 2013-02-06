@@ -21,7 +21,7 @@ https://github.com/chicken-mobile/example
 
 ## Installing Eggs
 
-Add the `host/bin` directory of this repo to `PATH`. Now you can use `chicken-install` as usual.
+Add the `host/bin` and `toolchain/android-14/bin` directories of this repo to `PATH`. Now you can use `chicken-install` as usual (be careful with directories precedence in PATH in case it already points to an existent Chicken installation).
 
 ## Warning
 
