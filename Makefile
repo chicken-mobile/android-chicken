@@ -1,5 +1,6 @@
 NDK_PATH=/opt/google/android/ndk
 PLATFORM=android-14
+CHICKEN_VERSION=4.8.2
 
 PWD=$(shell pwd)
 export PATH := /usr/lib/ccache:$(PWD)/toolchain/$(PLATFORM)/bin:$(PATH)
@@ -7,8 +8,8 @@ export PATH := /usr/lib/ccache:$(PWD)/toolchain/$(PLATFORM)/bin:$(PATH)
 
 all: cross-chicken
 
-target/: toolchain/$(PLATFORM)/ build/target/chicken-4.8.0/
-	cd build/target/chicken-4.8.0/; \
+target/: toolchain/$(PLATFORM)/ build/target/chicken-$(CHICKEN_VERSION)/
+	cd build/target/chicken-$(CHICKEN_VERSION)/; \
 		CCACHE_CC=arm-linux-androideabi-gcc $(MAKE) \
 			PLATFORM=android \
 			HOSTSYSTEM=arm-linux-androideabi \
@@ -19,8 +20,8 @@ target/: toolchain/$(PLATFORM)/ build/target/chicken-4.8.0/
 			DESTDIR=$(PWD)/target \
 		install
 
-cross-chicken: target/ build/cross/chicken-4.8.0/
-	cd build/cross/chicken-4.8.0/; \
+cross-chicken: target/ build/cross/chicken-$(CHICKEN_VERSION)/
+	cd build/cross/chicken-$(CHICKEN_VERSION)/; \
 		$(MAKE) \
 			PLATFORM=linux \
 			TARGETSYSTEM=arm-linux-androideabi \
@@ -33,23 +34,22 @@ cross-chicken: target/ build/cross/chicken-4.8.0/
 toolchain/$(PLATFORM)/:
 	$(NDK_PATH)/build/tools/make-standalone-toolchain.sh --platform=$(PLATFORM) --install-dir=./toolchain/$(PLATFORM)/
 
-chicken-4.8.0.tar.gz: 
-	wget -c http://code.call-cc.org/releases/current/chicken-4.8.0.tar.gz -O chicken-4.8.0.tar.gz
-	touch chicken-4.8.0.tar.gz
+chicken-$(CHICKEN_VERSION).tar.gz:
+	wget -c http://code.call-cc.org/releases/current/chicken-$(CHICKEN_VERSION).tar.gz -O chicken-$(CHICKEN_VERSION).tar.gz
+	touch chicken-$(CHICKEN_VERSION).tar.gz
 
-build/target/chicken-4.8.0/: chicken-4.8.0.tar.gz
+build/target/chicken-$(CHICKEN_VERSION)/: chicken-$(CHICKEN_VERSION).tar.gz
 	mkdir -p build/target/
 	cd build/target;  \
-		tar xzvf $(PWD)/chicken-4.8.0.tar.gz; \
-		cd chicken-4.8.0; \
-			patch -p1 < $(PWD)/patches/add_linux_platform_target.patch; \
+		tar xzvf $(PWD)/chicken-$(CHICKEN_VERSION).tar.gz; \
+		cd chicken-$(CHICKEN_VERSION); \
 			touch .
 
-build/cross/chicken-4.8.0/: chicken-4.8.0.tar.gz
+build/cross/chicken-$(CHICKEN_VERSION)/: chicken-$(CHICKEN_VERSION).tar.gz
 	mkdir -p build/cross/
 	cd build/cross/; \
-		tar xzvf ../../chicken-4.8.0.tar.gz; \
-		touch chicken-4.8.0
+		tar xzvf ../../chicken-$(CHICKEN_VERSION).tar.gz; \
+		touch chicken-$(CHICKEN_VERSION)
 
 clean: 
 	rm -rf toolchain
