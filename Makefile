@@ -1,4 +1,4 @@
-NDK_PATH=/opt/google/android/ndk
+NDK_PATH ?= /opt/google/android/ndk
 PLATFORM=android-14
 CHICKEN_VERSION=4.8.2
 
