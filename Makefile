@@ -13,12 +13,10 @@ toolchain/$(PLATFORM)/:
 	  --install-dir=toolchain/$(PLATFORM)
 
 src/chicken-core/:
-	cd src; \
-		git clone https://github.com/chicken-mobile/chicken-core.git -b android
-
+		git clone https://github.com/chicken-mobile/chicken-core.git -b android src/chicken-core
 
 build/target/: src/chicken-core/ toolchain/$(PLATFORM)/
-	mkdir build/target; \
+	mkdir -p build/target; \
 	cd src/chicken-core; \
 		$(MAKE) PLATFORM=android confclean; \
 		$(MAKE) \
@@ -32,7 +30,7 @@ build/target/: src/chicken-core/ toolchain/$(PLATFORM)/
 		install
 
 build/host/: src/chicken-core/ build/target/
-	mkdir build/host; \
+	mkdir -p build/host; \
 	cd src/chicken-core; \
 		$(MAKE) PLATFORM=linux confclean; \
 		$(MAKE) \
@@ -43,5 +41,6 @@ build/host/: src/chicken-core/ build/target/
 			TARGET_RUN_PREFIX=/proc/self/cwd \
 			PROGRAM_PREFIX=android- \
 		install
+
 clean: 
-	rm -rf build/*
+	rm -rf build/* toolchain
