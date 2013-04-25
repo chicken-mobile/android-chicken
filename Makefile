@@ -26,9 +26,9 @@ build/target/: src/chicken-core/ toolchain/$(PLATFORM)/
 			HOSTSYSTEM=arm-linux-androideabi \
 			TARGET_FEATURES="-no-feature x86 -feature arm" \
 			ARCH= \
-			PREFIX=/proc/self/cwd \
+			PREFIX=/data/data/com.bevuta.androidChickenTest \
 			DESTDIR=$(PWD)/build/target \
-			EGGDIR=/proc/self/cwd/lib \
+			EGGDIR=/data/data/com.bevuta.androidChickenTest/lib \
 		install
 
 build/host/: src/chicken-core/ build/target/
@@ -39,8 +39,8 @@ build/host/: src/chicken-core/ build/target/
 			PLATFORM=linux \
 			TARGETSYSTEM=arm-linux-androideabi \
 			PREFIX=$(PWD)/build/host \
-			TARGET_PREFIX=$(PWD)/build/target/proc/self/cwd \
-			TARGET_RUN_PREFIX=/proc/self/cwd \
+			TARGET_PREFIX=$(PWD)/build/target/data/data/com.bevuta.androidChickenTest \
+			TARGET_RUN_PREFIX=/data/data/com.bevuta.androidChickenTest \
 			PROGRAM_PREFIX=android- \
 		install
 clean: 
