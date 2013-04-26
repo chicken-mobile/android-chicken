@@ -1,0 +1,9 @@
+NDK_PATH         ?= /opt/google/android/ndk
+SDK_PATH         ?= /opt/google/android/sdk
+ANDROID_PLATFORM ?= android-14
+PACKAGE_NAME     ?= com.bevuta.androidChickenTest
+HOST_ARCH        ?= linux-x86
+NAME     	 ?= androidChickenTest
+ACTIVITY 	 ?= NativeChicken
+ARCH     	 ?= armeabi
+DEBUGBUILD       ?= 1
