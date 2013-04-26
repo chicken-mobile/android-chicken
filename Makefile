@@ -23,7 +23,7 @@ src/chicken-core/chicken-boot: src/chicken-core/
 		$(MAKE) PLATFORM=linux confclean boot-chicken; \
 		touch *.scm
 
-build/target/: src/chicken-core/ toolchain/$(ANDROID_PLATFORM)/ build/chicken-boot
+build/target/: src/chicken-core/ toolchain/$(ANDROID_PLATFORM)/ src/chicken-core/chicken-boot
 	mkdir -p build/target
 	cd src/chicken-core; \
 		$(MAKE) PLATFORM=android confclean; \
