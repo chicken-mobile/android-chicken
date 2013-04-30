@@ -43,7 +43,6 @@ build/target/: src/chicken-core/ toolchain/$(ANDROID_PLATFORM)/ src/chicken-core
 build/host/: src/chicken-core/ build/target/
 	mkdir -p build/host
 	cd src/chicken-core; \
-		$(MAKE) PLATFORM=linux confclean; \
 		$(MAKE) PLATFORM=linux \
 			CHICKEN=./chicken-boot \
 			TARGETSYSTEM=arm-linux-androideabi \
