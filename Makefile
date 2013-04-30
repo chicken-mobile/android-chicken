@@ -4,7 +4,7 @@ PWD=$(shell pwd)
 export PATH := $(PWD)/toolchain/$(ANDROID_PLATFORM)/bin:$(PATH)
 
 
-.PHONY: all clean spotless
+.PHONY: all clean spotless host target
 
 all: build/host/
 
@@ -24,34 +24,40 @@ src/chicken-core/chicken-boot: src/chicken-core/
 		touch *.scm
 
 build/target/: src/chicken-core/ toolchain/$(ANDROID_PLATFORM)/ src/chicken-core/chicken-boot
+	$(MAKE) target
+
+target:
 	mkdir -p build/target
 	cd src/chicken-core; \
-		$(MAKE) PLATFORM=android confclean; \
 		$(MAKE) PLATFORM=android \
 			CHICKEN=./chicken-boot \
 			HOSTSYSTEM=arm-linux-androideabi \
-			TARGET_FEATURES="-no-feature x86 -feature arm" \
+			TARGET_FEATURES="-no-feature x86 -no-feature x86-64 -feature arm -feature android" \
 			DEBUGBUILD=$(DEBUGBUILD) \
 			ARCH= \
 			PREFIX=/data/data/$(PACKAGE_NAME) \
 			DESTDIR=$(PWD)/build/target \
 			EGGDIR=/data/data/$(PACKAGE_NAME)/lib \
-		install
+		confclean clean all install
 	mkdir -p build/target/data/data/$(PACKAGE_NAME)/lib/chicken/7
 	mv build/target/data/data/$(PACKAGE_NAME)/lib/*.import.* build/target/data/data/$(PACKAGE_NAME)/lib/chicken/7/
 
 build/host/: src/chicken-core/ build/target/
+	$(MAKE) host
+
+host:
 	mkdir -p build/host
 	cd src/chicken-core; \
 		$(MAKE) PLATFORM=linux \
 			CHICKEN=./chicken-boot \
 			TARGETSYSTEM=arm-linux-androideabi \
+			TARGET_FEATURES="-no-feature x86 -no-feature x86-64 -feature arm -feature android" \
 			DEBUGBUILD=$(DEBUGBUILD) \
 			PREFIX=$(PWD)/build/host \
 			TARGET_PREFIX=$(PWD)/build/target/data/data/$(PACKAGE_NAME) \
 			TARGET_RUN_PREFIX=/data/data/$(PACKAGE_NAME) \
 			PROGRAM_PREFIX=android- \
-		install
+		confclean clean all install
 
 spotless: clean
 	rm -rf src
