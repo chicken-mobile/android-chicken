@@ -1,0 +1,24 @@
+
+  Building CHICKEN for cross-compiling
+  ====================================
+
+
+* Requirements
+
+  - A working CHICKEN installation, not too old, if possible.
+
+
+* Configuration
+
+  Please copy "default-config.mk" into "config.mk" and make the necessary changes
+  to reflect your working environment.
+
+
+* Building
+
+  Entering "make" will create a bootstrapping compiler and host- and
+  target parts of a CHICKEN cross-compilation installation in "build/host"
+  and "build/target", respectively. You can then install eggs by running
+  "build/host/bin/android-chicken-install".
+
+  For more information, please consult the Makefile.
