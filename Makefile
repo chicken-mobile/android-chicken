@@ -26,7 +26,7 @@ src/chicken-core/chicken-boot: src/chicken-core/
 build/target/: src/chicken-core/ toolchain/$(ANDROID_PLATFORM)/ src/chicken-core/chicken-boot
 	$(MAKE) target
 
-update-sources:
+update-sources: src/chicken-core/
 	cd src/chicken-core; git pull
 
 target:
