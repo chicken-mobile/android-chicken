@@ -5,7 +5,8 @@
 
 * Requirements
 
-  - A working CHICKEN installation, not too old, if possible.
+  A working CHICKEN installation, not too old. Version 4.8.0 or higher is
+  recommended.
 
 
 * Configuration
