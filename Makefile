@@ -32,7 +32,7 @@ update-sources: src/chicken-core/
 target:
 	mkdir -p build/target
 	cd src/chicken-core; \
-		PATH=$$PWD/toolchain/$(ANDROID_PLATFORM)/bin $(MAKE) PLATFORM=android \
+		PATH=$$PWD/toolchain/$(ANDROID_PLATFORM)/bin:$$PATH $(MAKE) PLATFORM=android \
 			CHICKEN=./chicken-boot \
 			HOSTSYSTEM=arm-linux-androideabi \
 			TARGET_FEATURES="-no-feature x86 -no-feature x86-64 -feature arm -feature android" \
