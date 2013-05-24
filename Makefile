@@ -56,6 +56,7 @@ host:
 			CHICKEN=./chicken-boot \
 			TARGETSYSTEM=arm-linux-androideabi \
 			TARGET_FEATURES="-no-feature x86 -no-feature x86-64 -feature arm -feature android" \
+			TARGET_C_COMPILER=$$PWD/../../toolchain/$(ANDROID_PLATFORM)/bin/arm-linux-androideabi-gcc \
 			DEBUGBUILD=$(DEBUGBUILD) \
 			PREFIX=$(PWD)/build/host \
 			TARGET_PREFIX=$(PWD)/build/target/data/data/$(PACKAGE_NAME) \
