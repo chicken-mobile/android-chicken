@@ -4,9 +4,9 @@ PWD=$(shell pwd)
 export PATH := $(PWD)/toolchain/$(ANDROID_PLATFORM)/bin:$(PATH)
 
 
-.PHONY: all clean spotless host target update-sources
+.PHONY: all clean spotless host target update
 
-all: update-sources build/host/
+all: update build/host/
 
 toolchain/$(ANDROID_PLATFORM)/:
 	mkdir -p toolchain/$(ANDROID_PLATFORM) && \
@@ -20,13 +20,14 @@ src/chicken-core/:
 
 src/chicken-core/chicken-boot: src/chicken-core/
 	cd src/chicken-core; \
+		rm -f chicken; \
 		$(MAKE) PLATFORM=linux confclean boot-chicken; \
 		touch *.scm
 
 build/target/: src/chicken-core/ toolchain/$(ANDROID_PLATFORM)/ src/chicken-core/chicken-boot
 	$(MAKE) target
 
-update-sources: src/chicken-core/
+update: src/chicken-core/
 	cd src/chicken-core; git pull
 
 target:
