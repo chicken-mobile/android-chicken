@@ -5,14 +5,17 @@ These files will setup a cross compiler toolchain for the use of Chicken Scheme 
 ## Prerequisites
 
 * Android [SDK](http://developer.android.com/sdk/) and [NDK](http://developer.android.com/tools/sdk/ndk/)
-* Edit the first line in the makefile to point to the path to your NDK installation. On my system this is `/opt/google/android/ndk`.
-* A [Chicken](http://code.call-cc.org) installation
+* A [Chicken](http://code.call-cc.org) installation. Version 4.8.0 or higher is recommended.
+
+## Configuration
+
+* Copy `default-config.mk` into `config.mk` and make the necessary changes to reflect your working environment.
 
 ## Build
 
-Run `make`.
+Entering `make` will create a bootstrapping compiler and host- and target parts of a CHICKEN cross-compilation installation in `build/host` and `build/target`, respectively. You can then install eggs by running `build/host/bin/android-chicken-install`.
 
-This will only build Chicken for Android. Add the new `csc` to `PATH` while developing for Android.
+For more information, please consult the Makefile.
 
 Use `adb` to copy binaries to Android.
 
