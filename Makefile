@@ -8,7 +8,9 @@ export PATH := $(PWD)/toolchain/$(ANDROID_PLATFORM)/bin:$(PATH)
 
 all: update build/host/
 
-toolchain/$(ANDROID_PLATFORM)/:
+toolchain/$(ANDROID_PLATFORM)/: toolchain/$(ANDROID_PLATFORM)/COPYING
+
+toolchain/$(ANDROID_PLATFORM)/COPYING:
 	mkdir -p toolchain/$(ANDROID_PLATFORM) && \
 	$(NDK_PATH)/build/tools/make-standalone-toolchain.sh \
 	  --platform=$(ANDROID_PLATFORM) \
