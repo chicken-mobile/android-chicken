@@ -37,6 +37,17 @@ If you want to contribute I'm happy to receive your improvements :)
 
 You will find us on irc at irc.f0o.de in #mobile-chicken
 
+## TODOs
+
+### Copy libs with ndk-build
+
+We can't simply invoke the `libs` make target along with
+chicken-target etc, because it gets run before the cleaning of
+./libs/. Currently, we need to do `ndk-build && make -C jni/chicken
+libs`.
+
+Maybe there is a way to do get this running after the libs cleanup.
+
 ## Embedding custom libs is hard
 
 If your APK contains ./libs/armeabi/file.so, it will not end up under
