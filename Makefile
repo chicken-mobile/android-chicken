@@ -107,3 +107,13 @@ $(CHICKEN_HOST_OUT_BUILT):
 		PROGRAM_PREFIX=android- \
 		confclean clean all install
 	echo chicken-host built. try 'export PATH=$(CHICKEN_HOST_OUT)$(PACKAGE_NAME):\$PPATH ; android-csc -cflags'
+
+
+# ******************** libs util ********************
+# helper to copy unit/eggs/*.so files to project libs folder
+LIBS_OUT     := $(shell pwd)/../../libs/armeabi/
+
+.PHONY: libs
+libs:
+	mkdir -p $(LIBS_OUT)
+	csi -s move-libs.scm $(CHICKEN_TARGET_OUT)$(SYS_PREFIX) $(LIBS_OUT)
