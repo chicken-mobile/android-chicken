@@ -1,5 +1,4 @@
-build/
-target/
-host/
-toolchain/
-chicken*.tar.gz
+/toolchain/
+/chicken-core/
+/target/
+/host/

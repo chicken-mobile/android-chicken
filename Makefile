@@ -1,74 +1,109 @@
-include config.mk
-
-PWD=$(shell pwd)
-export PATH := $(PWD)/toolchain/$(ANDROID_PLATFORM)/bin:$(PATH)
 
 
-.PHONY: all clean spotless host target update
+# try to autodetect package name
+PACKAGE_NAME     := $(shell csi -s find-package.scm ../../AndroidManifest.xml)
+ANDROID_PLATFORM := $(shell csi -s find-platform.scm ../../project.properties)
 
-all: update build/host/
+# let's try to find the android ndk path through `which ndk-build`
+WHICH_NDK_BUILD  := $(shell which ndk-build)
+ANDROID_NDK      := $(shell dirname $(WHICH_NDK_BUILD))
 
-toolchain/$(ANDROID_PLATFORM)/: toolchain/$(ANDROID_PLATFORM)/COPYING
 
-toolchain/$(ANDROID_PLATFORM)/COPYING:
-	mkdir -p toolchain/$(ANDROID_PLATFORM) && \
-	$(NDK_PATH)/build/tools/make-standalone-toolchain.sh \
+# hacky: we're using $(shell pwd)/executable because relative
+# filenames apparently doesn't work in places like HOSTSYSTEM and
+# DESTDIR when `make -C another-directory`. So pass absolute directory
+# filenames:
+ALOCAL_PATH    := $(shell pwd)
+
+CHICKEN_CORE       := $(ALOCAL_PATH)/chicken-core/
+ANDROID_TOOLCHAIN  := $(ALOCAL_PATH)/toolchain/
+CHICKEN_TARGET_OUT := $(ALOCAL_PATH)/target/
+CHICKEN_HOST_OUT   := $(ALOCAL_PATH)/host/
+
+# the target prefix. this way, the chicken runtime should look for
+# eggs under /data/data/$(PACKAGE_NAME)/lib/chicken/7.
+SYS_PREFIX := /data/data/$(PACKAGE_NAME)
+
+# files which are expected to be present after a successful chicken
+# target and host build. we're including $(PACKAGE_NAME) here so that
+# both target and host
+CHICKEN_TARGET_OUT_BUILT := $(CHICKEN_TARGET_OUT)$(SYS_PREFIX)/lib/libchicken.so
+CHICKEN_HOST_OUT_BUILT   := $(CHICKEN_HOST_OUT)$(PACKAGE_NAME)/bin/android-chicken
+
+# path of arm-linux-androideabi-gcc etc. must be absolute so that
+# aosp-chicken-install will work when it's no longer on PATH.
+TARGET_COMPILER_PATH := $(ANDROID_TOOLCHAIN)/bin/
+
+CHICKEN_PATH := $(CHICKEN_TARGET_OUT)$(SYS_PREFIX)/
+
+
+
+# ******************** chicken ********************
+
+all: android-toolchain chicken-sources chicken-boot chicken-target chicken-host
+
+android-toolchain: $(ANDROID_TOOLCHAIN)/
+
+$(ANDROID_TOOLCHAIN)/:
+	mkdir -p $(ANDROID_TOOLCHAIN) && \
+	$(ANDROID_NDK)/build/tools/make-standalone-toolchain.sh \
 	  --platform=$(ANDROID_PLATFORM) \
-	  --system=$(HOST_ARCH) \
-	  --install-dir=toolchain/$(ANDROID_PLATFORM)
+	  --system=linux-x86 \
+	  --install-dir=$(ANDROID_TOOLCHAIN)
 
-src/chicken-core/:
-	git clone https://github.com/chicken-mobile/chicken-core.git -b android src/chicken-core
+chicken-sources: $(CHICKEN_CORE)/
 
-src/chicken-core/chicken-boot: src/chicken-core/
-	cd src/chicken-core; \
-		rm -f chicken; \
-		$(MAKE) PLATFORM=linux confclean boot-chicken; \
-		touch *.scm
+$(CHICKEN_CORE)/:
+	git clone https://github.com/chicken-mobile/chicken-core.git \
+		-b android-soname-fix-maybe \
+		$(CHICKEN_CORE)
 
-build/target/: src/chicken-core/ toolchain/$(ANDROID_PLATFORM)/ src/chicken-core/chicken-boot
-	$(MAKE) target
+# build chicken-boot unless binary already present
+chicken-boot: $(CHICKEN_CORE)/chicken-boot
 
-update: src/chicken-core/
-	cd src/chicken-core; git pull
+# build chicken-bootstrap (so we can compile scm -> c files)
+$(CHICKEN_CORE)/chicken-boot:
+	echo $(CHICKEN_CORE)
+	make -C $(CHICKEN_CORE) \
+		PLATFORM=linux ARCH= confclean boot-chicken
 
-target:
-	mkdir -p build/target
-	cd src/chicken-core; \
-		PATH=$$PWD/toolchain/$(ANDROID_PLATFORM)/bin:$$PATH $(MAKE) PLATFORM=android \
-			CHICKEN=./chicken-boot \
-			HOSTSYSTEM=arm-linux-androideabi \
-			TARGET_FEATURES="-no-feature x86 -no-feature x86-64 -feature arm -feature android" \
-			DEBUGBUILD=$(DEBUGBUILD) \
-			ARCH= \
-			PREFIX=/data/data/$(PACKAGE_NAME) \
-			DESTDIR=$(PWD)/build/target \
-			EGGDIR=/data/data/$(PACKAGE_NAME)/lib \
-		confclean clean all install
-	mkdir -p build/target/data/data/$(PACKAGE_NAME)/lib/chicken/7
-	mv build/target/data/data/$(PACKAGE_NAME)/lib/*.import.* build/target/data/data/$(PACKAGE_NAME)/lib/chicken/7/
+# build chicken target runtime if not already present
+chicken-target: $(CHICKEN_TARGET_OUT_BUILT)
 
-build/host/: src/chicken-core/ build/target/
-	$(MAKE) host
-
-host:
-	mkdir -p build/host
-	cd src/chicken-core; \
-		$(MAKE) PLATFORM=linux \
-			CHICKEN=./chicken-boot \
-			TARGETSYSTEM=arm-linux-androideabi \
-			TARGET_FEATURES="-no-feature x86 -no-feature x86-64 -feature arm -feature android" \
-			TARGET_C_COMPILER=$$PWD/../../toolchain/$(ANDROID_PLATFORM)/bin/arm-linux-androideabi-gcc \
-			DEBUGBUILD=$(DEBUGBUILD) \
-			PREFIX=$(PWD)/build/host \
-			TARGET_PREFIX=$(PWD)/build/target/data/data/$(PACKAGE_NAME) \
-			TARGET_RUN_PREFIX=/data/data/$(PACKAGE_NAME) \
-			PROGRAM_PREFIX=android- \
+# build chicken target runtime (copy this to target android system on device)
+$(CHICKEN_TARGET_OUT_BUILT):
+	mkdir -p $(CHICKEN_TARGET_OUT)
+	make -C $(CHICKEN_CORE) \
+		PLATFORM=android \
+		CHICKEN=$(CHICKEN_CORE)/chicken-boot \
+		HOSTSYSTEM=$(TARGET_COMPILER_PATH)/arm-linux-androideabi  \
+		TARGET_FEATURES="-no-feature x86 -no-feature x86-64 -feature arm -feature android" \
+		DEBUGBUILD=$(DEBUGBUILD) \
+		ARCH= \
+		PREFIX=$(SYS_PREFIX) \
+		DESTDIR=$(CHICKEN_TARGET_OUT) \
+		EGGDIR=$(SYS_PREFIX)/lib/chicken/7 \
 		confclean clean all install
 
-spotless: clean
-	rm -rf src
+# build chicken-host (android-csc and friends) unless already present
+chicken-host: $(CHICKEN_HOST_OUT_BUILT)
 
-clean: 
-	rm -rf toolchain
-	rm -rf build
+# build chicken host (the chicken which will be on your machine and
+# used when invoking `android-chicken-install` for example). See
+# http://wiki.call-cc.org/man/4/Cross%20development#building-the-cross-chicken
+$(CHICKEN_HOST_OUT_BUILT):
+	mkdir -p $(CHICKEN_HOST_OUT)
+	$(MAKE) -C $(CHICKEN_CORE) \
+		ARCH= \
+		PLATFORM=linux \
+		CHICKEN=$(CHICKEN_CORE)/chicken-boot \
+		TARGET_C_COMPILER=$(TARGET_COMPILER_PATH)/arm-linux-androideabi-gcc \
+		TARGETSYSTEM=arm-linux-androideabi \
+		TARGET_FEATURES="-no-feature x86 -no-feature x86-64 -feature arm -feature android" \
+		DEBUGBUILD=$(DEBUGBUILD) \
+		PREFIX=$(CHICKEN_HOST_OUT)$(PACKAGE_NAME) \
+		TARGET_PREFIX=$(CHICKEN_TARGET_OUT)$(SYS_PREFIX) \
+		TARGET_RUN_PREFIX=$(SYS_PREFIX) \
+		PROGRAM_PREFIX=android- \
+		confclean clean all install
+	echo chicken-host built. try 'export PATH=$(CHICKEN_HOST_OUT)$(PACKAGE_NAME):\$PPATH ; android-csc -cflags'
