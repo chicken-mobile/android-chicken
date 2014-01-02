@@ -1,31 +1,65 @@
 # Chicken Scheme for Android
 
-These files will setup a cross compiler toolchain for the use of Chicken Scheme on Android. With the help of the Chicken cross compiler we can build native binaries with csc for Android.
+These files will setup a cross compiler toolchain for the use of
+Chicken Scheme on Android. With the help of the Chicken cross compiler
+we can build native binaries with csc for Android.
 
 ## Prerequisites
 
 * Android [SDK](http://developer.android.com/sdk/) and [NDK](http://developer.android.com/tools/sdk/ndk/)
 * A [Chicken](http://code.call-cc.org) installation. Version 4.8.0 or higher is recommended.
 
-## Configuration
-
-* Copy `default-config.mk` into `config.mk` and make the necessary changes to reflect your working environment.
-
 ## Build
 
-Entering `make` will create a bootstrapping compiler and host- and target parts of a CHICKEN cross-compilation installation in `build/host` and `build/target`, respectively. You can then install eggs by running `build/host/bin/android-chicken-install`.
+Place this directory in your jni folder of your Android project. Eg.
+<project>/jni/chicken/.
+
+Entering `make` will create a bootstrapping compiler and host- and
+target parts of a CHICKEN cross-compilation installation in
+`host/$(PACKAGE_NAME)` and `target/`, respectively.
+
+If you include this `Android.mk` from your project's `Android.mk`
+file, you get a `chicken` prebuilt LOCAL_MODULE which other Android
+libraries can depend on, like this:
+
+```make
+# jni/Android.mk
+include $(CLEAR_VARS)
+LOCAL_MODULE    := hello-jni
+LOCAL_SRC_FILES := hello-jni.c
+LOCAL_SHARED_LIBRARIES := chicken
+include $(BUILD_SHARED_LIBRARY)
+
+# include the chicken prebuilt library
+include jni/chicken/Android.mk
+```
+## Installing Eggs
+
+With a successful build of cross-chicken, you can install eggs by
+running `/host/$(PACKAGE_NAME)/bin/android-chicken-install`.
+
+You can add the `host/$(PACKAGE_NAME)/bin` directory of this repo to
+`PATH`, and you can use `android-chicken-install` as chicken-install.
+It will install two versions of each egg: one for the host (which runs
+egg macros, if I have understood things correctly) and one for the
+target (normal runtime).
 
 For more information, please consult the Makefile.
 
-Use `adb` to copy binaries to Android.
+Now do:
+```bash
+# builds your android shared lib and the prebuilt libchicken.so
+ndk-build # and cleans ./libs, need to copy eggs again
+# copies eggs and units with the required "lib" prefix so that the installer picks them up:
+make -C jni/chicken libs
+# I've run into problems if I don't clean first
+ant clean debug
+adb install -r bin/Project-debug.apk
+```
 
 ## Example
 
-https://github.com/chicken-mobile/example
-
-## Installing Eggs
-
-Add the `host/bin` and `toolchain/android-14/bin` directories of this repo to `PATH`. Now you can use `chicken-install` as usual (be careful with directories precedence in PATH in case it already points to an existent Chicken installation).
+TODO
 
 ## Warning
 
