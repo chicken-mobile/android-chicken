@@ -57,10 +57,6 @@ ant clean debug
 adb install -r bin/Project-debug.apk
 ```
 
-## Example
-
-TODO
-
 ## Warning
 
 This build includes some hardcoded paths which must be changed if you change an Android package name. I will try to clean up this and provide a way to have multiple toolchains for the different platforms regardless of the package name used.
@@ -77,14 +73,16 @@ You will find us on irc at irc.f0o.de in #mobile-chicken
 
 If you see this, it's unfortunately quite common..
 
-```Caused by: java.lang.UnsatisfiedLinkError: Cannot load library: link_image[1936]:    37 could not load needed library './obj/local/armeabi/libchicken.so' for 'libmain.so' (load_library[1091]: Library './obj/local/armeabi/libchicken.so' not found)
+```
+Caused by: java.lang.UnsatisfiedLinkError: could not load needed library 
+'./obj/local/armeabi/libchicken.so' for 'libmain.so' 
+(Library './obj/local/armeabi/libchicken.so' not found)
 ```
 
 - Check that your shared object actually is in the apk
 - Check that it contains the lib prefix
 - Make sure that you load libchicken.so from Java before any other
  libraries:
-
 
 ```java
 static {
@@ -94,7 +92,7 @@ static {
 }
 ```
 
-### `application terminated normally`
+### "Application terminated normally"
 
 Are you compiling a .scm into .c and embedding Chicken? Try
 `(return-to-host)` at the end of the scm file.
@@ -104,8 +102,9 @@ Are you compiling a .scm into .c and embedding Chicken? Try
 
 ### Plugin loading extensions with "lib" prefix
 
-Sadly, Android requires all libraries to be prefixed with `lib`. Place
-this before any (use) calls:
+Sadly, Android requires all libraries to be prefixed with `lib`, 
+and this build-system adds that prefix to so-files. Place this
+before any (use) calls:
 
 ```scheme
 (define %##sys#find-extension ##sys#find-extension)
