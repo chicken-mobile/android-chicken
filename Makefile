@@ -82,7 +82,7 @@ $(CHICKEN_TARGET_OUT_BUILT):
 		ARCH= \
 		PREFIX=$(SYS_PREFIX) \
 		DESTDIR=$(CHICKEN_TARGET_OUT) \
-		EGGDIR=$(SYS_PREFIX)/lib/chicken/7 \
+		EGGDIR=$(SYS_PREFIX)/lib/ \
 		confclean clean all install
 
 # build chicken-host (android-csc and friends) unless already present
