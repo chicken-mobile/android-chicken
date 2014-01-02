@@ -36,3 +36,37 @@ If you have any issues, please report them. I will try to fix them as soon as po
 If you want to contribute I'm happy to receive your improvements :)
 
 You will find us on irc at irc.f0o.de in #mobile-chicken
+
+## Embedding custom libs is hard
+
+If your APK contains ./libs/armeabi/file.so, it will not end up under
+/data/data/package/lib because the installer on the device won't copy
+shared objects that don't start with "lib". So we can't simply copy
+your eggs or tcp.import.so, for example, over to ./libs/armeabi/.
+
+However, if you rename tcp.import.so to libtcp.import.so, ndk-build deletes
+it with a `rm -f ./libs/lib*.so` in the beginning of the ndk-build
+process.
+
+We could have used assets if they had been extracted to the device
+file system, however, they are only available through Java API and are
+uncompressed from the APK on the fly.
+
+### move-libs.scm: A possible solution
+
+- Since all so's need to beging with "lib", we can hack chicken so it
+  looks for (conc "lib" filename) when loading extensions. eg. it
+  looks for libtcp.import.so when you do (use tcp).
+
+- Make a script that copies chicken's so-files and eggs to
+  ./libs/armeabi/ with the "lib" prefixed.
+
+- Run this script *after* ndk-build.
+
+Sigh .... all of this just because Android won't install lib files
+that don't start with lib.
+
+### Another possible solution
+
+Use ./assets/, then extract all un-prefixes so's on startup from Java
+at runtime. Meh.
