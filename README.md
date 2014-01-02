@@ -102,6 +102,19 @@ Are you compiling a .scm into .c and embedding Chicken? Try
 
 ## TODOs
 
+### Plugin loading extensions with "lib" prefix
+
+Sadly, Android requires all libraries to be prefixed with `lib`. Place
+this before any (use) calls:
+
+```scheme
+(define %##sys#find-extension ##sys#find-extension)
+(define (##sys#find-extension p inc?)
+  ;;(info (string-append "##sys#find-extension: looking for " p ".so or " (string-append "lib" p ".so")))
+  (or (%##sys#find-extension p inc?)
+      (%##sys#find-extension (string-append "lib" p) inc?)))
+```
+
 ### Copy libs with ndk-build
 
 We can't simply invoke the `libs` make target along with
