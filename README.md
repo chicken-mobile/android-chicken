@@ -71,6 +71,35 @@ If you want to contribute I'm happy to receive your improvements :)
 
 You will find us on irc at irc.f0o.de in #mobile-chicken
 
+## Troubleshooting
+
+### java.lang.UnsatisfiedLinkError
+
+If you see this, it's unfortunately quite common..
+
+```Caused by: java.lang.UnsatisfiedLinkError: Cannot load library: link_image[1936]:    37 could not load needed library './obj/local/armeabi/libchicken.so' for 'libmain.so' (load_library[1091]: Library './obj/local/armeabi/libchicken.so' not found)
+```
+
+- Check that your shared object actually is in the apk
+- Check that it contains the lib prefix
+- Make sure that you load libchicken.so from Java before any other
+ libraries:
+
+
+```java
+static {
+    System.loadLibrary("chicken");
+    System.loadLibrary("SDL2");
+    System.loadLibrary("hello-jni");
+}
+```
+
+### `application terminated normally`
+
+Are you compiling a .scm into .c and embedding Chicken? Try
+`(return-to-host)` at the end of the scm file.
+
+
 ## TODOs
 
 ### Copy libs with ndk-build
