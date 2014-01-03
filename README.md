@@ -8,6 +8,8 @@ we can build native binaries with csc for Android.
 
 * Android [SDK](http://developer.android.com/sdk/) and [NDK](http://developer.android.com/tools/sdk/ndk/)
 * A [Chicken](http://code.call-cc.org) installation. Version 4.8.0 or higher is recommended.
+* The `ssax`, `sxpath` and `sxml` eggs
+* `ndk-build` on your path
 
 ## Build
 
