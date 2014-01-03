@@ -24,4 +24,6 @@
                 (file-copy source dest)))))
  (append (glob (make-pathname source-dir "/lib/*.so"))
          (let ((eggdir (make-pathname source-dir "/lib/chicken/7/")))
-           (if (directory? eggdir) (glob (make-pathname eggdir "*.so"))) '())))
+           (if (directory? eggdir)
+               (glob (make-pathname eggdir "*.so"))
+               '()))))
