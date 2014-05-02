@@ -61,13 +61,7 @@ adb install -r bin/Project-debug.apk
 
 ## Warning
 
-This build includes some hardcoded paths which must be changed if you change an Android package name. I will try to clean up this and provide a way to have multiple toolchains for the different platforms regardless of the package name used.
-
-If you have any issues, please report them. I will try to fix them as soon as possible.
-
-If you want to contribute I'm happy to receive your improvements :)
-
-You will find us on irc at irc.f0o.de in #mobile-chicken
+If you change the package-name in your `AndroidManifest.xml`, you may have to delete `jni/chicken/target` and `jni/chicken/host` so that the cross-chicken picks this up.
 
 ## Troubleshooting
 
